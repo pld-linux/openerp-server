@@ -89,7 +89,7 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/{Changelog,INSTALL}
-%attr(640,root,openerp-srv) /etc/%{name}.conf
+%attr(640,root,openerp-srv) %config(noreplace) %verify(not md5 mtime size) /etc/%{name}.conf
 %attr(755,root,root) %{_sbindir}/*
 %{py_sitescriptdir}/%{name}
 %{_mandir}/man?/*
