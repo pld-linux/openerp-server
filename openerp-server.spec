@@ -6,7 +6,7 @@ Summary:	Open ERP - free ERP and CRM software (server)
 Summary(pl.UTF-8):	Open ERP - darmowe oprogramowanie ERP i CRM (serwer)
 Name:		openerp-server
 Version:	5.0.12
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Applications
 Source0:	http://www.openerp.com/download/stable/source/%{name}-%{version}.tar.gz
@@ -61,15 +61,18 @@ python setup.py build
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_sbindir},/etc}
+install -d $RPM_BUILD_ROOT/etc
 
 python setup.py install \
 	--prefix=/usr \
 	--root=$RPM_BUILD_ROOT \
 	--optimize=2
 
-mv $RPM_BUILD_ROOT%{_bindir}/* $RPM_BUILD_ROOT%{_sbindir}
 install %{SOURCE1} $RPM_BUILD_ROOT/etc
+
+mv $RPM_BUILD_ROOT%{_bindir} $RPM_BUILD_ROOT%{_sbindir}
+sed -e "s,\.py,.pyc,;s,$RPM_BUILD_ROOT,," -i \
+	$RPM_BUILD_ROOT%{_sbindir}/%{name}
 
 %py_postclean
 
