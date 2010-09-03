@@ -1,3 +1,7 @@
+# TODO:
+# - init script (with -c /etc/openerp-server.conf)
+# - logging to /var/log
+# - extract default config file from sources?
 Summary:	Open ERP - free ERP and CRM software (server)
 Summary(pl.UTF-8):	Open ERP - darmowe oprogramowanie ERP i CRM (serwer)
 Name:		openerp-server
@@ -7,6 +11,7 @@ License:	GPL v2
 Group:		Applications
 Source0:	http://www.openerp.com/download/stable/source/%{name}-%{version}.tar.gz
 # Source0-md5:	40444cb067d146ab04956913f11d57ff
+Source1:	%{name}.conf
 URL:		http://www.openerp.com/
 BuildRequires:	python
 BuildRequires:	python-devel
@@ -17,6 +22,8 @@ BuildRequires:	python-pydot
 BuildRequires:	python-lxml
 BuildRequires:	rpmbuild(macros) >= 1.219
 %pyrequires_eq	python-modules
+# Some modules need pdb for some reason
+Requires:	python-devel-tools
 Requires:	python-psycopg2
 Requires:	python-ReportLab
 Requires:	python-pychart
@@ -54,19 +61,35 @@ python setup.py build
 %install
 rm -rf $RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT{%{_sbindir},/etc}
+
 python setup.py install \
 	--prefix=/usr \
 	--root=$RPM_BUILD_ROOT \
 	--optimize=2
+
+mv $RPM_BUILD_ROOT%{_bindir}/* $RPM_BUILD_ROOT%{_sbindir}
+install %{SOURCE1} $RPM_BUILD_ROOT/etc
 
 %py_postclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+%groupadd -g 253 openerp-srv
+%useradd -u 253 -d /usr/share/empty -g openerp-srv -c "Open ERP Server" openerp-srv
+
+%postun
+if [ "$1" = "0" ]; then
+        %userremove openerp-srv
+        %groupremove openerp-srv
+fi
+
 %files
 %defattr(644,root,root,755)
 %doc doc/{Changelog,INSTALL}
-%attr(755,root,root) %{_bindir}/*
+%attr(640,root,openerp-srv) /etc/%{name}.conf
+%attr(755,root,root) %{_sbindir}/*
 %{py_sitescriptdir}/%{name}
 %{_mandir}/man?/*
