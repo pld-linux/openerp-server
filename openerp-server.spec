@@ -5,12 +5,12 @@
 Summary:	Open ERP - free ERP and CRM software (server)
 Summary(pl.UTF-8):	Open ERP - darmowe oprogramowanie ERP i CRM (serwer)
 Name:		openerp-server
-Version:	5.0.12
-Release:	0.2
+Version:	5.0.14
+Release:	0.1
 License:	GPL v2
 Group:		Applications
 Source0:	http://www.openerp.com/download/stable/source/%{name}-%{version}.tar.gz
-# Source0-md5:	40444cb067d146ab04956913f11d57ff
+# Source0-md5:	78796d59fc1e0016f386c641ef618541
 Source1:	%{name}.conf
 URL:		http://www.openerp.com/
 BuildRequires:	python
